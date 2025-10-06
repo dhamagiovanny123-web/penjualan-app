@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toko Online Modern</title>
+    <!-- Memuat Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Memuat Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Menghubungkan ke file CSS eksternal -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">TokoKu</h1>
+            <div class="flex items-center space-x-4">
+                <button id="view-cart-btn" class="flex items-center space-x-1 text-gray-600 hover:text-blue-600 transition-colors">
+                    <i class="fas fa-shopping-cart text-2xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 md:p-8">
+        <!-- Loader -->
+        <div id="loader" class="text-center py-10">
+            <i class="fas fa-spinner fa-spin text-4xl text-blue-500"></i>
+            <p class="mt-2 text-gray-600">Memuat produk...</p>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Kartu produk akan dimasukkan di sini oleh JavaScript -->
+        </div>
+
+        <!-- Error Message -->
+        <div id="error-message" class="hidden text-center bg-red-100 text-red-700 p-4 rounded-lg">
+            <p>Gagal memuat produk. Silakan coba lagi nanti.</p>
+        </div>
+    </main>
+
+    <!-- Product Detail Modal -->
+    <div id="productModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-4 sm:p-6">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center pb-3 border-b">
+                    <h3 class="text-xl font-semibold text-gray-900" id="modal-title">Detail Produk</h3>
+                    <button id="closeModalBtn" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+                <!-- Modal Body -->
+                <div class="mt-4 md:flex md:space-x-6">
+                    <div class="md:w-1/2 flex-shrink-0">
+                        <img id="modal-image" src="https://placehold.co/400x400" alt="Product Image" class="w-full h-auto object-contain rounded-lg max-h-80">
+                    </div>
+                    <div class="mt-4 md:mt-0 md:w-1/2">
+                        <span id="modal-category" class="text-sm bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Kategori</span>
+                        <h4 class="text-2xl font-bold text-gray-800 my-2" id="modal-product-name">Nama Produk</h4>
+                        <p class="text-3xl font-light text-blue-600 mb-4" id="modal-price">Rp 0</p>
+                        <p class="text-gray-600 text-sm leading-relaxed" id="modal-description">Deskripsi produk akan muncul di sini.</p>
+                        <button id="modal-add-to-cart" class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2">
+                            <i class="fas fa-cart-plus"></i>
+                            <span>Tambah ke Keranjang</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-4 sm:p-6">
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center pb-3 border-b">
+                    <h3 class="text-xl font-semibold text-gray-900">Keranjang Belanja</h3>
+                    <button id="closeCartBtn" class="text-gray-400 hover:text-gray-600">
+                        <i class="fas fa-times fa-lg"></i>
+                    </button>
+                </div>
+                
+                <!-- Cart Items -->
+                <div id="cart-items" class="mt-4 space-y-4">
+                    <!-- Item keranjang akan dimasukkan di sini oleh JavaScript -->
+                </div>
+                
+                <!-- Empty Cart Message -->
+                <div id="empty-cart" class="hidden text-center py-8">
+                    <i class="fas fa-shopping-cart text-gray-300 text-5xl mb-3"></i>
+                    <p class="text-gray-500">Keranjang belanja Anda kosong</p>
+                </div>
+                
+                <!-- Cart Summary -->
+                <div id="cart-summary" class="hidden mt-6 pt-4 border-t">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-lg font-semibold">Total:</span>
+                        <span id="cart-total" class="text-xl font-bold text-blue-600">Rp 0</span>
+                    </div>
+                    
+                    <!-- Customer Information Form -->
+                    <div class="mt-6 pt-4 border-t">
+                        <h4 class="text-lg font-semibold mb-4">Informasi Pembeli</h4>
+                        <form id="customer-form">
+                            <div class="form-group">
+                                <label for="customer-name" class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                                <input type="text" id="customer-name" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Masukkan nama lengkap">
+                                <div id="name-error" class="error-message hidden">Nama tidak boleh kosong</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="customer-address" class="block text-sm font-medium text-gray-700 mb-1">Alamat Pengiriman</label>
+                                <textarea id="customer-address" rows="2" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Masukkan alamat lengkap"></textarea>
+                                <div id="address-error" class="error-message hidden">Alamat tidak boleh kosong</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="customer-phone" class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
+                                <input type="tel" id="customer-phone" class="form-input w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Contoh: 08123456789">
+                                <div id="phone-error" class="error-message hidden">Nomor telepon tidak valid</div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <div class="flex space-x-3 mt-6">
+                        <button id="clear-cart-btn" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                            <i class="fas fa-trash-alt mr-2"></i>Kosongkan
+                        </button>
+                        <button id="checkout-btn" class="flex-1 bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                            <i class="fab fa-whatsapp mr-2"></i>Checkout via WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50"></div>
+
+    <!-- Menghubungkan ke file JavaScript eksternal (defer memastikan HTML dimuat lebih dulu) -->
+    <script src="script.js" defer></script>
+</body>
+</html>
